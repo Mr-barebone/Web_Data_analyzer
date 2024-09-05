@@ -23,8 +23,9 @@ import pyarrow.parquet as pq
 
 from sqlalchemy import create_engine, schema, Table
 
+# ****Connection parameters****
 from databases import with_db_connection
-
+#           ********
 
 @with_db_connection
 async def get_notices(conn):

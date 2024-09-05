@@ -5,11 +5,11 @@ from functools import wraps
 async def get_db_connection():
     try:
         conn = await asyncpg.connect(
-            user="mohit",
-            password="password",
-            database="bmaps",
+            user="postgres",
+            password="admin",
+            database="webdata_analyzer",
             host="localhost",
-            port=5433,
+            port=5432,
         )
         print("Connection established")
         return conn
@@ -33,3 +33,16 @@ def with_db_connection(func):
             await conn.close()
             print("Connection closed")
     return wrapper
+
+## **** Testing ****
+
+# import asyncio
+# async def test_get_db_connection():
+#     conn = await get_db_connection()
+#     # await asyncio.gather(get_db_connection()) - TO run all the coroutine concurrently
+#     if conn:
+#         print("Connection object:", conn)
+#         await conn.close()  # Make sure to close the connection after testing
+#     else:
+#         print("No connection object returned")
+# asyncio.run(test_get_db_connection())
