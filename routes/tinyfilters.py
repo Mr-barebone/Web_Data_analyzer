@@ -207,6 +207,8 @@ def get_subFilter_from_table(df:pl.DataFrame, SUB_FILTER:dict, group:list):
                     "Article_Score"]
         
         for sub_filter, column_name in zip(keys, values):
+            if df.shape == (0, 0):
+                continue
             if column_name is "Article_Score":
                 continue
             if column_name not in  group:

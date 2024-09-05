@@ -132,7 +132,7 @@ async def CallSubfilterProcedure(conn, table_name:str):
     try:
         # Our query used to call get_sp_otb to with 2 parameters.
         query = """
-            CALL get_sp_otb_get_filter($1)
+            CALL get_sp_otb_get_filter_1($1)
         """
         await conn.execute(
             query,

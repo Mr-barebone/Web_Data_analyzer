@@ -320,10 +320,10 @@ async def get_data_ws(websocket: WebSocket, db: Session = Depends(get_db)):
                 #             DATA, child, other_filter_condition, newValue
                 #         )
 
-            if kpi_all_selection != "":
-                # manage kpi all selection option
-                #     print(DATA.columns, 'select all columns')
-                DATA = kp_operations.apply_kpi_for_main_data(DATA, int(kpi_all_selection))
+            # if kpi_all_selection != "":
+            #     # manage kpi all selection option
+            #     #     print(DATA.columns, 'select all columns')
+            #     DATA = kp_operations.apply_kpi_for_main_data(DATA, int(kpi_all_selection))
 
             if data_filter["group_by"]["status"]:
                 print("main grouping")
@@ -455,38 +455,39 @@ async def get_data_ws(websocket: WebSocket, db: Session = Depends(get_db)):
                     print(traceback.format_exc(), 'bo_co_ser')
             # bottom_column = bottom_column.to_pandas()
             except Exception as e:
+                pass
+            #     bottom_column = data
 
-                bottom_column = data
+            # TEMP["key"] = DATA
+            # size = len(data)
+            # if size == 1:
+            #     editable_cols = json.dumps(
+            #         [
+            #             "Logistic%",
+            #             "DisplayItemQty",
+            #             "COR_EOLStock_value",
+            #             "adjusted_markdown_percent",
+            #             "adjusted_sellthru_percent",
+            #             # "DisplayItemValue",
+            #         ]
+            #     )
+            # else:
+            #     editable_cols = json.dumps(OTB.EDITABLE_COLS)
 
-            TEMP["key"] = DATA
-            size = len(data)
-            if size == 1:
-                editable_cols = json.dumps(
-                    [
-                        "Logistic%",
-                        "DisplayItemQty",
-                        "COR_EOLStock_value",
-                        "adjusted_markdown_percent",
-                        "adjusted_sellthru_percent",
-                        # "DisplayItemValue",
-                    ]
-                )
-            else:
-                editable_cols = json.dumps(OTB.EDITABLE_COLS)
+            # if "sort" in data_filter:
+            #     datas = Operations.sort_and_clean(data_filter, data, filters)
+            #     TEMP['export_data'] = datas
+            #     # sel_all_kpi = data_filter['select_all_kpi']
+            #     kpi_all_selection = kp_operations.check_all_selection(kpi_all_selection)
 
-            if "sort" in data_filter:
-                datas = Operations.sort_and_clean(data_filter, data, filters)
-                TEMP['export_data'] = datas
-                # sel_all_kpi = data_filter['select_all_kpi']
-                kpi_all_selection = kp_operations.check_all_selection(kpi_all_selection)
+            #     data_json = f"""{datas.to_json(orient='split')[:-1]}, "select_all_kpi":{json.dumps(kpi_all_selection)},"editable_cols":{editable_cols}, "percent_col":{json.dumps(percent_col)},"tabs":{tabs} ,"items":{size},"total":{bottom_column.to_json()} {datas.to_json(orient='split')[-1]}"""
 
-                data_json = f"""{datas.to_json(orient='split')[:-1]}, "select_all_kpi":{json.dumps(kpi_all_selection)},"editable_cols":{editable_cols}, "percent_col":{json.dumps(percent_col)},"tabs":{tabs} ,"items":{size},"total":{bottom_column.to_json()} {datas.to_json(orient='split')[-1]}"""
-
-            
-                await websocket.send_text(data_json)
-            # response = {"message": "Data received", "received_data": json.dumps(data_filter)}
+            # json.dumps() function will convert a subset of Python objects into a json string.
+                # await websocket.send_text(data_json)
+                await websocket.send_text(json.dumps({"long":"hi"}))
+            response = {"message": "Data received", "received_data": json.dumps(data_filter)}
             # await websocket.send_text(json.dumps(response))
-    
+    # 
     except WebSocketDisconnect:
         # Handle disconnection gracefully
         print("WebSocket connection closed unexpectedly")

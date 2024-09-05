@@ -4,6 +4,23 @@ document.addEventListener("DOMContentLoaded", function() {
 function get_py_data()
      {
         const socket = new WebSocket('ws://127.0.0.1:5000/otb/get_data_ws');
+
+        const fileInput = document.getElementById("fileInput");
+        const file = fileInput.files[0];
+        // Read file content
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                const csvContent = event.target.result;
+                console.log("Csv content: ", csvContent);
+                displayCSVData(csvContent)
+                processCSV(csvContent); // Nove you can process the csv content 
+            };
+            reader.readAsText(file);
+        }else{
+            alert("Please select a csv file")
+        }
+
         document.getElementById("submitButton").addEventListener("click", async function(){
         // Define the JSON structure as described
         const jsonData = {
@@ -21,6 +38,14 @@ function get_py_data()
             sku: [],
             top_items: [],
             store_class: [],
+            select_all_kpi: false,
+            table_changes: {},
+            group_by: {
+                status: false
+            },
+            expand: {
+                status: false
+            },
             secondary_filter: {
                 HistoricalYear: [],
                 history_dates: [],
@@ -75,4 +100,28 @@ function get_py_data()
         socket.onclose = function() {
             console.log('Websocket connection closed');
         };
+    }
+
+    function processCSV(csvContent) {
+        console.log("processing csv content")
+    }
+
+    function displayCSVData(csvContent) {
+        const rows = csvContent.split("\n");
+        const firstFiveRows = rows.slice(0, 6); // Get first 5 rows with 1 header
+        
+        const tableHeader = document.getElementById("tableHeader");
+        const tableBody = document.getElementById("tableBody");
+
+        //clear existing content
+        tableHeader.innerHTML = "";
+        tableBody.innerHTML = "";
+
+        // Create table headers from first row (header row)
+        const headers = firstFiveRows[0].split(",")
+        headers.forEach(header => {
+            const th = document.createElement("th");
+            th.textContent = header.trim();
+            tableHeader.appendChild(th)
+        })
     }

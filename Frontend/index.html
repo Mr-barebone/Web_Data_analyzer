@@ -9,8 +9,18 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <input type="file" id = "fileInput" accept=".csv">
+
     <button id="submitButton">Submit</button>
 
+     <!-- Table for Displaying CSV Data -->
+     <table id="csvTable" border="1" cellpadding="5">
+        <thead>
+            <tr id="tableHeader"></tr>
+        </thead>
+        <tbody id="tableBody"></tbody>
+    </table>
+    
     <script src="colcnt.js"></script>
 </body>
 </html>
