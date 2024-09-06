@@ -86,6 +86,15 @@ get_session_id = OTB.get_session_id
 update_users_tables = OTB.update_users_tables
 save_table = OTB.save_table
 
+# *************Stock market
+DATA = pd.DataFrame() 
+DATA_DICT = {"default" : DATA}
+#**************************
+@otb.get("/get_default")
+async def get_default():
+    DATA_DICT['default'] = pd.read_csv("bmaps_data/stock_data/ADANIPORTS.csv")
+    data_json = f"""{DATA_DICT['default'].to_json(orient='split')}"""
+    return JSONResponse(content={"data" : data_json})
 
 @otb.get("/sub_filters")
 async def sub_filters():
@@ -145,346 +154,346 @@ async def get_data_ws(websocket: WebSocket, db: Session = Depends(get_db)):
         while True:
             data_filter = await websocket.receive_json()
             print(data_filter, "SDFD")
-            file_path = 'data.json'
+            # file_path = 'data.json'
 
-            filters = Filters(**data_filter)
-            print(filters)
-            secondary = data_filter["secondary_filter"]
-            group_by_id = Echelons(**secondary)
+            # filters = Filters(**data_filter)
+            # print(filters)
+            # secondary = data_filter["secondary_filter"]
+            # group_by_id = Echelons(**secondary)
 
-            secondary_filter = data_filter["secondary_filter"]
+            # secondary_filter = data_filter["secondary_filter"]
 
             
-            if TEMP["update_flag"]:
-                print("update_flag_true")
-                DATA = TEMP["key"]
-                TEMP["update_flag"] = False
+            # if TEMP["update_flag"]:
+            #     print("update_flag_true")
+            #     DATA = TEMP["key"]
+            #     TEMP["update_flag"] = False
 
-            if data_filter["fetch_from_db"]:
-                history_date_from = filters.history_date_range.fro
-                history_date_to = filters.history_date_range.to
-                forecast_date_from = filters.forecast_date_range.fro
-                forecast_date_to = filters.forecast_date_range.to
-                sales_channel = filters.sales_channel
-                product_family = filters.product_family
-                sub_families = filters.sub_families
-                suppliers = filters.suppliers
-                category = filters.category
-                sub_category = filters.sub_category
-                sku = filters.sku
-                top_items = filters.top_items
-                store_class = filters.top_items
+            # if data_filter["fetch_from_db"]:
+            #     history_date_from = filters.history_date_range.fro
+            #     history_date_to = filters.history_date_range.to
+            #     forecast_date_from = filters.forecast_date_range.fro
+            #     forecast_date_to = filters.forecast_date_range.to
+            #     sales_channel = filters.sales_channel
+            #     product_family = filters.product_family
+            #     sub_families = filters.sub_families
+            #     suppliers = filters.suppliers
+            #     category = filters.category
+            #     sub_category = filters.sub_category
+            #     sku = filters.sku
+            #     top_items = filters.top_items
+            #     store_class = filters.top_items
 
-                table_ch_selthru = None
-                table_ch_mkd = None
+            #     table_ch_selthru = None
+            #     table_ch_mkd = None
 
-                try:
+            #     try:
 
-                    await execute_stored_procedure(
-                        history_date_from,
-                        history_date_to,
-                        forecast_date_from,
-                        forecast_date_to,
-                        sales_channel,
-                        product_family,
-                        sub_families,
-                        suppliers,
-                        category,
-                        sub_category,
-                        sku,
-                        top_items,
-                        store_class,
-                    )
-                    # await check_table_exists('ra_sales_item_stock_kpi_joined')
-                    # await get_table_columns('ra_sales_item_stock_kpi_joined')
+            #         await execute_stored_procedure(
+            #             history_date_from,
+            #             history_date_to,
+            #             forecast_date_from,
+            #             forecast_date_to,
+            #             sales_channel,
+            #             product_family,
+            #             sub_families,
+            #             suppliers,
+            #             category,
+            #             sub_category,
+            #             sku,
+            #             top_items,
+            #             store_class,
+            #         )
+            #         # await check_table_exists('ra_sales_item_stock_kpi_joined')
+            #         # await get_table_columns('ra_sales_item_stock_kpi_joined')
 
-                    # await execute_stored_proc_sku_wise_calc(forecast_date_from, forecast_date_to)
-                    print("sku wise calculations done in stored procedure")
-                    await check_table_exists('item_counter')
+            #         # await execute_stored_proc_sku_wise_calc(forecast_date_from, forecast_date_to)
+            #         print("sku wise calculations done in stored procedure")
+            #         await check_table_exists('item_counter')
 
-                    # DATA = await getData()
+            #         # DATA = await getData()
 
-                except:
-                    print(traceback.format_exc())
+            #     except:
+            #         print(traceback.format_exc())
 
 
              
-                await OTB.initial_frame_calculation(DATA)
+            #     await OTB.initial_frame_calculation(DATA)
 
-                # print(DATA["INVOICEDATE"].unique(), "historical_year_values")
+            #     # print(DATA["INVOICEDATE"].unique(), "historical_year_values")
 
-                # print(round(DATA.estimated_size("mb"), 2), " MB memory size of data step4")
-                # print(round(DATA.estimated_size("gb"), 2), " GB memory size of data step4")
-                # data = DATA
-                global group
-                group = []
-            kpi_all_selection = data_filter["select_all_kpi"]
+            #     # print(round(DATA.estimated_size("mb"), 2), " MB memory size of data step4")
+            #     # print(round(DATA.estimated_size("gb"), 2), " GB memory size of data step4")
+            #     # data = DATA
+            #     global group
+            #     group = []
+            # kpi_all_selection = data_filter["select_all_kpi"]
            
 
-            sub_filter_state = False
-            filter_condition = None
-            # filter_condition, sub_filter_state, group = OTB.secondary_filter(
-            #     DATA, filters, sub_filter_state, group, filter_condition
-            # )
+            # sub_filter_state = False
+            # filter_condition = None
+            # # filter_condition, sub_filter_state, group = OTB.secondary_filter(
+            # #     DATA, filters, sub_filter_state, group, filter_condition
+            # # )
     
-            TEMP['key'] = DATA
+            # TEMP['key'] = DATA
 
 
-            if not sub_filter_state == True:
-                group = []
-                filter_condition = None
-                sub_filter_state = False
+            # if not sub_filter_state == True:
+            #     group = []
+            #     filter_condition = None
+            #     sub_filter_state = False
 
-            # if secondary_filter["article_score"] != []:
-            #     DATA = OTB.call_kpi(DATA, data_filter)
+            # # if secondary_filter["article_score"] != []:
+            # #     DATA = OTB.call_kpi(DATA, data_filter)
 
-            #'kpi_selection_flag'
+            # #'kpi_selection_flag'
 
-            if data_filter["table_changes"] != {}:
-                row = data_filter["table_changes"]["row"]
-                columnID = data_filter["table_changes"]["columnId"]
-                newValue = data_filter["table_changes"]["newValue"]
+            # if data_filter["table_changes"] != {}:
+            #     row = data_filter["table_changes"]["row"]
+            #     columnID = data_filter["table_changes"]["columnId"]
+            #     newValue = data_filter["table_changes"]["newValue"]
 
-                if columnID == 'adjusted_markdown_percent':
-                    table_ch_mkd = True
-                if columnID == 'adjusted_sellthru_percent':
-                    table_ch_selthru = True
+            #     if columnID == 'adjusted_markdown_percent':
+            #         table_ch_mkd = True
+            #     if columnID == 'adjusted_sellthru_percent':
+            #         table_ch_selthru = True
 
-                print('row is;', row), 
-                print(columnID, newValue, "colid and new value")
-                print(DATA.columns)
+            #     print('row is;', row), 
+            #     print(columnID, newValue, "colid and new value")
+            #     print(DATA.columns)
 
-                # (
-                #     child,
-                #     other_filter_condition,
-                #     filter_condition,
-                #     parent,
-                #     columns_to_filter,
-                #     values_to_filter,
-                #     group,
-                #     DATA,
-                # ) = OTB.table_change_filter(
-                #     group, HEIRARCHY, data_filter, DATA, row, filter_condition
-                # )
-                group, sub_filter_state = OTB.secondary_filter(filters, sub_filter_state, group)
-                print(group, 'table_group before the change filter')
-                child, columns_to_filter, values_to_filter, group = OTB.table_change_filter(
-                     group, HEIRARCHY, data_filter, row
-                )
-                print(child, "child")
-                print(columns_to_filter, values_to_filter, 'table col val to filter')
-                print(group, 'table_group')
-                if row[columnID] == None:
-                    original = 0
-                else:
-                    original  = row[columnID]
-                increase = newValue - original
-                print('increase is,', increase)
-                # DATA, data = Operations.edit_tables(
-                #     DATA,
-                #     data,
-                #     row,
-                #     group,
-                #     newValue,
-                #     columnID,
-                #     columns_to_filter,
-                #     sub_filter_state,
-                #     parent,
-                #     child,
-                #     other_filter_condition,
-                #     filter_condition,
-                # )
-                await editable_col_calculations(row, columnID, newValue, columns_to_filter, values_to_filter, original, increase, child)
+            #     # (
+            #     #     child,
+            #     #     other_filter_condition,
+            #     #     filter_condition,
+            #     #     parent,
+            #     #     columns_to_filter,
+            #     #     values_to_filter,
+            #     #     group,
+            #     #     DATA,
+            #     # ) = OTB.table_change_filter(
+            #     #     group, HEIRARCHY, data_filter, DATA, row, filter_condition
+            #     # )
+            #     group, sub_filter_state = OTB.secondary_filter(filters, sub_filter_state, group)
+            #     print(group, 'table_group before the change filter')
+            #     child, columns_to_filter, values_to_filter, group = OTB.table_change_filter(
+            #          group, HEIRARCHY, data_filter, row
+            #     )
+            #     print(child, "child")
+            #     print(columns_to_filter, values_to_filter, 'table col val to filter')
+            #     print(group, 'table_group')
+            #     if row[columnID] == None:
+            #         original = 0
+            #     else:
+            #         original  = row[columnID]
+            #     increase = newValue - original
+            #     print('increase is,', increase)
+            #     # DATA, data = Operations.edit_tables(
+            #     #     DATA,
+            #     #     data,
+            #     #     row,
+            #     #     group,
+            #     #     newValue,
+            #     #     columnID,
+            #     #     columns_to_filter,
+            #     #     sub_filter_state,
+            #     #     parent,
+            #     #     child,
+            #     #     other_filter_condition,
+            #     #     filter_condition,
+            #     # )
+            #     await editable_col_calculations(row, columnID, newValue, columns_to_filter, values_to_filter, original, increase, child)
                 
                 
-                # if columnID == "Check_box":
+            #     # if columnID == "Check_box":
 
-                #     (
-                #         child,
-                #         other_filter_condition,
-                #         filter_condition,
-                #         parent,
-                #         columns_to_filter,
-                #         values_to_filter,
-                #         group,
-                #         DATA,
-                #     ) = OTB.table_change_filter(
-                #         group, HEIRARCHY, data_filter, DATA, row, filter_condition
-                #     )
-                #     if child is None:  # and parent == None:
-                #         DATA = kp_operations.apply_kpi_for_main_data(
-                #             DATA, newValue
-                #         )  # , row
-                #     if child is not None:
-                #         DATA = kp_operations.calculate_revised_budget(
-                #             DATA, child, other_filter_condition, newValue
-                #         )
+            #     #     (
+            #     #         child,
+            #     #         other_filter_condition,
+            #     #         filter_condition,
+            #     #         parent,
+            #     #         columns_to_filter,
+            #     #         values_to_filter,
+            #     #         group,
+            #     #         DATA,
+            #     #     ) = OTB.table_change_filter(
+            #     #         group, HEIRARCHY, data_filter, DATA, row, filter_condition
+            #     #     )
+            #     #     if child is None:  # and parent == None:
+            #     #         DATA = kp_operations.apply_kpi_for_main_data(
+            #     #             DATA, newValue
+            #     #         )  # , row
+            #     #     if child is not None:
+            #     #         DATA = kp_operations.calculate_revised_budget(
+            #     #             DATA, child, other_filter_condition, newValue
+            #     #         )
 
-            # if kpi_all_selection != "":
-            #     # manage kpi all selection option
-            #     #     print(DATA.columns, 'select all columns')
-            #     DATA = kp_operations.apply_kpi_for_main_data(DATA, int(kpi_all_selection))
+            # # if kpi_all_selection != "":
+            # #     # manage kpi all selection option
+            # #     #     print(DATA.columns, 'select all columns')
+            # #     DATA = kp_operations.apply_kpi_for_main_data(DATA, int(kpi_all_selection))
 
-            if data_filter["group_by"]["status"]:
-                print("main grouping")
+            # if data_filter["group_by"]["status"]:
+            #     print("main grouping")
                 
-                sub_filter_state = any(values != [] for key, values in data_filter["secondary_filter"].items() if key != 'article_score')
-                group, sub_filter_state = OTB.secondary_filter(filters, sub_filter_state, group)
-                group, sub_filter_state = OTB.apply_heirarchial_filters(group_by_id, sub_filter_state, group)
-                print(sub_filter_state, 'sfsss main')
-                if sub_filter_state:
-                    await get_apply_secondary_filters(sub_filter_state, data_filter["secondary_filter"])
-                    await CallSubfilterProcedure('otb_min_filter')
-                    df = await getSubfilterData()
-                    print(df, "main sub filters")
-                    OTB.SUB_FILTER = get_subFilter_from_table(df, OTB.SUB_FILTER, group)
-                else:
-                    await get_apply_secondary_filters(sub_filter_state, data_filter["secondary_filter"])
-                    await CallSubfilterProcedure('item_counter')
-                    df = await getSubfilterData()
-                    print(df, "main sub filters")
-                    OTB.SUB_FILTER = get_subFilter_from_table(df, OTB.SUB_FILTER, group)
+            #     sub_filter_state = any(values != [] for key, values in data_filter["secondary_filter"].items() if key != 'article_score')
+            #     group, sub_filter_state = OTB.secondary_filter(filters, sub_filter_state, group)
+            #     group, sub_filter_state = OTB.apply_heirarchial_filters(group_by_id, sub_filter_state, group)
+            #     print(sub_filter_state, 'sfsss main')
+            #     if sub_filter_state:
+            #         await get_apply_secondary_filters(sub_filter_state, data_filter["secondary_filter"])
+            #         await CallSubfilterProcedure('otb_min_filter')
+            #         df = await getSubfilterData()
+            #         print(df, "main sub filters")
+            #         OTB.SUB_FILTER = get_subFilter_from_table(df, OTB.SUB_FILTER, group)
+            #     else:
+            #         await get_apply_secondary_filters(sub_filter_state, data_filter["secondary_filter"])
+            #         await CallSubfilterProcedure('item_counter')
+            #         df = await getSubfilterData()
+            #         print(df, "main sub filters")
+            #         OTB.SUB_FILTER = get_subFilter_from_table(df, OTB.SUB_FILTER, group)
 
   
 
-                # data, filter_condition = await Operations.apply_group_by(
-                #     # DATA,
-                #     # data,
-                #     data_filter,
-                #     sub_filter_state,
-                #     group,
-                #     # filters,
-                #     # filter_condition,
-                # )
-                    print(group, 'main')
+            #     # data, filter_condition = await Operations.apply_group_by(
+            #     #     # DATA,
+            #     #     # data,
+            #     #     data_filter,
+            #     #     sub_filter_state,
+            #     #     group,
+            #     #     # filters,
+            #     #     # filter_condition,
+            #     # )
+            #         print(group, 'main')
 
-                data = await Operations.apply_group_by(data_filter, sub_filter_state, group)
+            #     data = await Operations.apply_group_by(data_filter, sub_filter_state, group)
                 
-                df = await getSubfilterData()
-                OTB.SUB_FILTER = get_subFilter_from_table(df, OTB.SUB_FILTER, group)
-                # print(data.columns, "columns_after_main_gpby")
-                # print(data['channel'])
+            #     df = await getSubfilterData()
+            #     OTB.SUB_FILTER = get_subFilter_from_table(df, OTB.SUB_FILTER, group)
+            #     # print(data.columns, "columns_after_main_gpby")
+            #     # print(data['channel'])
 
-            if data_filter["expand"]["status"]:  # Function to expand the channel
+            # if data_filter["expand"]["status"]:  # Function to expand the channel
 
-                sub_filter_state = any(values != [] for key, values in data_filter["secondary_filter"].items() if key != 'article_score')
+            #     sub_filter_state = any(values != [] for key, values in data_filter["secondary_filter"].items() if key != 'article_score')
 
-                if sub_filter_state:
-                    await get_apply_secondary_filters(sub_filter_state, data_filter["secondary_filter"])
-                    await CallSubfilterProcedure('otb_min_filter')
-                    df = await getSubfilterData()
-                    print(df, "expand sub filters")
-                    OTB.SUB_FILTER = get_subFilter_from_table(df, OTB.SUB_FILTER, group)
-                else:
-                    await get_apply_secondary_filters(sub_filter_state, data_filter["secondary_filter"])
-                    await CallSubfilterProcedure('item_counter')
-                    df = await getSubfilterData()
-                    print(df, "main sub filters")
-                    OTB.SUB_FILTER = get_subFilter_from_table(df, OTB.SUB_FILTER, group)
+            #     if sub_filter_state:
+            #         await get_apply_secondary_filters(sub_filter_state, data_filter["secondary_filter"])
+            #         await CallSubfilterProcedure('otb_min_filter')
+            #         df = await getSubfilterData()
+            #         print(df, "expand sub filters")
+            #         OTB.SUB_FILTER = get_subFilter_from_table(df, OTB.SUB_FILTER, group)
+            #     else:
+            #         await get_apply_secondary_filters(sub_filter_state, data_filter["secondary_filter"])
+            #         await CallSubfilterProcedure('item_counter')
+            #         df = await getSubfilterData()
+            #         print(df, "main sub filters")
+            #         OTB.SUB_FILTER = get_subFilter_from_table(df, OTB.SUB_FILTER, group)
 
 
 
-                group, sub_filter_state = OTB.secondary_filter(filters, sub_filter_state, group)
-                group, sub_filter_state = OTB.apply_heirarchial_filters(group_by_id, sub_filter_state, group)
+            #     group, sub_filter_state = OTB.secondary_filter(filters, sub_filter_state, group)
+            #     group, sub_filter_state = OTB.apply_heirarchial_filters(group_by_id, sub_filter_state, group)
 
-                print(group, 'exp')
+            #     print(group, 'exp')
 
-                data = await Operations.expand_hierarchy(data_filter, sub_filter_state, group)
-                df = await getSubfilterData()
-                OTB.SUB_FILTER = get_subFilter_from_table(df, OTB.SUB_FILTER, group)
+            #     data = await Operations.expand_hierarchy(data_filter, sub_filter_state, group)
+            #     df = await getSubfilterData()
+            #     OTB.SUB_FILTER = get_subFilter_from_table(df, OTB.SUB_FILTER, group)
 
-            try:
-                wr = False
+            # try:
+            #     wr = False
 
-                data = OTB.calculate_df(data, wr, table_ch_mkd, table_ch_selthru)
-                # await execute_stored_proc_final_data_output()
-                # data = await getData_final()
+            #     data = OTB.calculate_df(data, wr, table_ch_mkd, table_ch_selthru)
+            #     # await execute_stored_proc_final_data_output()
+            #     # data = await getData_final()
 
-                secondary = data_filter["secondary_filter"]
-                scores_m = secondary["article_score"]
-                art_cols = [f"pl.col('{col}').sum()" for a, col in arts.items() if a in scores_m]
-                agg_dict = [eval(expr)for expr in [
-                        f"pl.col('{col}').mean()" for col in avg_col if col in data.columns
-                    ]
-                    + [f"pl.col('{col}').sum()" for col in sum_col if col in data.columns]
-                    + [f"pl.col('{col}').max()" for col in rank_col]
-                    + [
-                        f"pl.col('{col}').sum()"
-                        for col in ["new_budget_mix", "revised_budget_amount"]
-                        if col in data.columns
-                    ]
-                    + [
-                        f"pl.col('{col}').mean()"
-                        for a, col in arts.items()
-                        if a in scores_m
-                    ]
-                    + [
-                        f"pl.col('{col}').mean()"
-                        for col in ["coefficient_score"]
-                        if len(art_cols) != 0
-                    ]
-                    + [
-                        f"pl.col('{col}').sum()"
-                        for col in ["coefficient_score_mix_percent"]
-                        if len(art_cols) != 0
-                    ]
-                    # + [f"pl.col('total_squ_count').n_unique()"]
-                ]
-
-                
-                bottom_column = data.select(agg_dict)
-                bottom_column = OTB.bottom_margin_calculation(bottom_column, table_ch_mkd, table_ch_selthru)
-                # print(bottom_column.select("FirstMargin_percent"), "The bcolmn fm")
-                try:
-                    if type(bottom_column) != dict:
-                        bottom_column = bottom_column.to_dict()
-                        bottom_column = {
-                            key: bottom_column[key][0] for key in list(bottom_column.keys())
-                        }
-                    bottom_column = pd.Series(bottom_column)
-                    bottom_column[int_cols] = bottom_column[int_cols].fillna(0).astype(int)
-                except:
-                    print(traceback.format_exc(), 'the err')
-                
-                # bottom_column[int_cols]    = bottom_column[int_cols].fill_nan(0).cast(pl.Int64)
-                # /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
-                # bottom_column[float_cols]  = bottom_column[float_cols].astype(float).round(2)
-                try:    
-                    bottom_column[float_cols] = bottom_column[float_cols].astype(float)
-                except:
-                    print(traceback.format_exc(), 'bo_co_ser')
-            # bottom_column = bottom_column.to_pandas()
-            except Exception as e:
-                pass
-            #     bottom_column = data
-
-            # TEMP["key"] = DATA
-            # size = len(data)
-            # if size == 1:
-            #     editable_cols = json.dumps(
-            #         [
-            #             "Logistic%",
-            #             "DisplayItemQty",
-            #             "COR_EOLStock_value",
-            #             "adjusted_markdown_percent",
-            #             "adjusted_sellthru_percent",
-            #             # "DisplayItemValue",
+            #     secondary = data_filter["secondary_filter"]
+            #     scores_m = secondary["article_score"]
+            #     art_cols = [f"pl.col('{col}').sum()" for a, col in arts.items() if a in scores_m]
+            #     agg_dict = [eval(expr)for expr in [
+            #             f"pl.col('{col}').mean()" for col in avg_col if col in data.columns
             #         ]
-            #     )
-            # else:
-            #     editable_cols = json.dumps(OTB.EDITABLE_COLS)
+            #         + [f"pl.col('{col}').sum()" for col in sum_col if col in data.columns]
+            #         + [f"pl.col('{col}').max()" for col in rank_col]
+            #         + [
+            #             f"pl.col('{col}').sum()"
+            #             for col in ["new_budget_mix", "revised_budget_amount"]
+            #             if col in data.columns
+            #         ]
+            #         + [
+            #             f"pl.col('{col}').mean()"
+            #             for a, col in arts.items()
+            #             if a in scores_m
+            #         ]
+            #         + [
+            #             f"pl.col('{col}').mean()"
+            #             for col in ["coefficient_score"]
+            #             if len(art_cols) != 0
+            #         ]
+            #         + [
+            #             f"pl.col('{col}').sum()"
+            #             for col in ["coefficient_score_mix_percent"]
+            #             if len(art_cols) != 0
+            #         ]
+            #         # + [f"pl.col('total_squ_count').n_unique()"]
+            #     ]
 
-            # if "sort" in data_filter:
-            #     datas = Operations.sort_and_clean(data_filter, data, filters)
-            #     TEMP['export_data'] = datas
-            #     # sel_all_kpi = data_filter['select_all_kpi']
-            #     kpi_all_selection = kp_operations.check_all_selection(kpi_all_selection)
+                
+            #     bottom_column = data.select(agg_dict)
+            #     bottom_column = OTB.bottom_margin_calculation(bottom_column, table_ch_mkd, table_ch_selthru)
+            #     # print(bottom_column.select("FirstMargin_percent"), "The bcolmn fm")
+            #     try:
+            #         if type(bottom_column) != dict:
+            #             bottom_column = bottom_column.to_dict()
+            #             bottom_column = {
+            #                 key: bottom_column[key][0] for key in list(bottom_column.keys())
+            #             }
+            #         bottom_column = pd.Series(bottom_column)
+            #         bottom_column[int_cols] = bottom_column[int_cols].fillna(0).astype(int)
+            #     except:
+            #         print(traceback.format_exc(), 'the err')
+                
+            #     # bottom_column[int_cols]    = bottom_column[int_cols].fill_nan(0).cast(pl.Int64)
+            #     # /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
+            #     # bottom_column[float_cols]  = bottom_column[float_cols].astype(float).round(2)
+            #     try:    
+            #         bottom_column[float_cols] = bottom_column[float_cols].astype(float)
+            #     except:
+            #         print(traceback.format_exc(), 'bo_co_ser')
+            # # bottom_column = bottom_column.to_pandas()
+            # except Exception as e:
+            #     pass
+            # #     bottom_column = data
 
-            #     data_json = f"""{datas.to_json(orient='split')[:-1]}, "select_all_kpi":{json.dumps(kpi_all_selection)},"editable_cols":{editable_cols}, "percent_col":{json.dumps(percent_col)},"tabs":{tabs} ,"items":{size},"total":{bottom_column.to_json()} {datas.to_json(orient='split')[-1]}"""
+            # # TEMP["key"] = DATA
+            # # size = len(data)
+            # # if size == 1:
+            # #     editable_cols = json.dumps(
+            # #         [
+            # #             "Logistic%",
+            # #             "DisplayItemQty",
+            # #             "COR_EOLStock_value",
+            # #             "adjusted_markdown_percent",
+            # #             "adjusted_sellthru_percent",
+            # #             # "DisplayItemValue",
+            # #         ]
+            # #     )
+            # # else:
+            # #     editable_cols = json.dumps(OTB.EDITABLE_COLS)
 
-            # json.dumps() function will convert a subset of Python objects into a json string.
-                # await websocket.send_text(data_json)
-                await websocket.send_text(json.dumps({"long":"hi"}))
+            # # if "sort" in data_filter:
+            # #     datas = Operations.sort_and_clean(data_filter, data, filters)
+            # #     TEMP['export_data'] = datas
+            # #     # sel_all_kpi = data_filter['select_all_kpi']
+            # #     kpi_all_selection = kp_operations.check_all_selection(kpi_all_selection)
+
+            # #     data_json = f"""{datas.to_json(orient='split')[:-1]}, "select_all_kpi":{json.dumps(kpi_all_selection)},"editable_cols":{editable_cols}, "percent_col":{json.dumps(percent_col)},"tabs":{tabs} ,"items":{size},"total":{bottom_column.to_json()} {datas.to_json(orient='split')[-1]}"""
+
+            # # json.dumps() function will convert a subset of Python objects into a json string.
+            #     # await websocket.send_text(data_json)
+            await websocket.send_text(json.dumps({"long":"hi"}))
             response = {"message": "Data received", "received_data": json.dumps(data_filter)}
             # await websocket.send_text(json.dumps(response))
     # 
