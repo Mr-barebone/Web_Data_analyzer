@@ -8,7 +8,8 @@ document.addEventListener("DOMContentLoaded", function() {
 function get_py_data() 
     {
         const socket = new WebSocket('ws://127.0.0.1:5000/otb/get_data_ws');
-
+        const dropdown = document.getElementById("dropdownMenu");
+        dropdown.value = "ADANIPORTS.csv";
         // Ensure the connection is established before calling Bck_fetchDefaultFile.
         // The WebSocket connection is created synchronously, but WebSocket connections take some time to establish. 
         // Therefore, it's better to wait until the WebSocket is fully connected before using it in the 
@@ -19,7 +20,7 @@ function get_py_data()
         //     // Now the connection is ready, pass the socket to the function
             
         // });
-        displayJSONData()
+        getJSONData()
         // selected_data_set = dropdownList()
         // getADANIPORTSDefault().then(data=>{
         //     console.log("Received data:", data);
@@ -77,73 +78,7 @@ function get_py_data()
 
 
 
-
-
-async function displayJSONData() {
-    const dropdown = document.getElementById("dropdownMenu");
-    const SelectedValue = dropdown.value;
-    console.log(SelectedValue)
-    // let JSONdata = null;
-    var JSONdata = await getADANIPORTSDefault();
-    dropdown.addEventListener('change', async function () {
-        const SelectedValue = dropdown.value;
-
-        // if (SelectedValue == "ADANIPORTS.csv")
-        //     try{
-        //     JSONdata = await getADANIPORTSDefault();
-        //     }catch (error){
-        //         console.error(error)
-        //     }
-        // else{
-        //     console.log("Drop changed")
-            console.log(SelectedValue)
-            JSONdata = await dropdownList(SelectedValue);
-            // dropdown.value = "ADANIPORTS.csv"; // This sets the dropdown to the desired default value
-                // Parse JSON data and display with dynamic table
-    const data = JSONdata.data;
-    const columns = JSONdata.columns;
-
-    console.log('Data:', data); // Log data to verify structure
-    console.log('Columns:', columns); // Log columns to verify structure
-    // Ensure data and columns are defined
-    if (data && columns) {
-        const tableHeader = document.getElementById("tableHeader");
-        const tableBody = document.getElementById("tableBody");
-
-        //clear existing content
-        tableHeader.innerHTML = "";
-        tableBody.innerHTML = "";
-
-        // Create table headers from column names
-        columns.forEach(column => {
-            const th = document.createElement("th");
-            th.textContent = column;
-            tableHeader.appendChild(th);
-        });
-
-        // Create table rows from data
-        data.forEach(row => {
-            const tr = document.createElement("tr");
-            columns.forEach((column, index) => {
-                const td = document.createElement("td");
-                td.textContent = row[index] || ""; // Access row data using index
-                tr.appendChild(td);
-            });
-            tableBody.appendChild(tr);
-        });
-    } else {
-        console.error('Data or columns are undefined.');
-    }
-
-        // }
-    })
-    // console.log('Data of display:', JSONdata); // This is a JavaScript object
-    // Check if jsonData is valid
-    if (!JSONdata) {
-        console.error('Failed to retrieve or parse data.');
-        return;
-    }
-
+async function displayJSONData(JSONdata) {
     // Parse JSON data and display with dynamic table
     const data = JSONdata.data;
     const columns = JSONdata.columns;
@@ -179,37 +114,31 @@ async function displayJSONData() {
     } else {
         console.error('Data or columns are undefined.');
     }
+}
 
 
-    function displayCSVData(csvContent) {
-        const rows = csvContent.split("\n");
-        const firstFiveRows = rows.slice(0, 6); // Get first 5 rows with 1 header
-        
-        const tableHeader = document.getElementById("tableHeader");
-        const tableBody = document.getElementById("tableBody");
-    
-        //clear existing content
-        tableHeader.innerHTML = "";
-        tableBody.innerHTML = "";
-    
-        // Create table headers from first row (header row)
-        const headers = firstFiveRows[0].split(",")
-        headers.forEach(header => {
-            const th = document.createElement("th");
-            th.textContent = header.trim();
-            tableHeader.appendChild(th)
-        })
+async function getJSONData() {
+    const dropdown = document.getElementById("dropdownMenu");
+    const SelectedValue = dropdown.value;
+    console.log(SelectedValue)
+    // let JSONdata = null;
+    var JSONdata = await getADANIPORTSDefault();
+    dropdown.addEventListener('change', async function () {
+        const SelectedValue = dropdown.value;
+            console.log(SelectedValue)
+            JSONdata = await dropdownList(SelectedValue);
+            displayJSONData(JSONdata);
+
+        // }
+    })
+    // console.log('Data of display:', JSONdata); // This is a JavaScript object
+    // Check if jsonData is valid
+    if (!JSONdata) {
+        console.error('Failed to retrieve or parse data.');
+        return;
     }
-    // ********Create table rows from data previous error************
-    // data.forEach(row => {
-    //     const tr = document.createElement("tr");
-    //     columns.forEach((column, index) => {
-    //         const td = document.createElement("td");
-    //         td.textContent = row[column] || ""; // Use index to access row data
-    //         tr.appendChild(td);
-    //     });
-    //     tableBody.appendChild(tr);
-    // });
+    displayJSONData(JSONdata);
+
 
 }
 
