@@ -1,6 +1,6 @@
 // import {Bck_fetchDefaultFile} from "./Bck.js";
 import {getADANIPORTSDefault} from "./Bck.js";
-
+import {dropdownList} from "./dropdown.js";
 
 document.addEventListener("DOMContentLoaded", function() {
     get_py_data();
@@ -20,7 +20,7 @@ function get_py_data()
             
         // });
         displayJSONData()
-
+        // selected_data_set = dropdownList()
         // getADANIPORTSDefault().then(data=>{
         //     console.log("Received data:", data);
         //     processCSV(data)
@@ -75,33 +75,69 @@ function get_py_data()
         };
     }
 
-function processCSV(csvContent) {
-    console.log("processing csv content")
-}
 
-function displayCSVData(csvContent) {
-    const rows = csvContent.split("\n");
-    const firstFiveRows = rows.slice(0, 6); // Get first 5 rows with 1 header
-    
-    const tableHeader = document.getElementById("tableHeader");
-    const tableBody = document.getElementById("tableBody");
 
-    //clear existing content
-    tableHeader.innerHTML = "";
-    tableBody.innerHTML = "";
 
-    // Create table headers from first row (header row)
-    const headers = firstFiveRows[0].split(",")
-    headers.forEach(header => {
-        const th = document.createElement("th");
-        th.textContent = header.trim();
-        tableHeader.appendChild(th)
-    })
-}
 
 async function displayJSONData() {
-    const JSONdata = await getADANIPORTSDefault();
+    const dropdown = document.getElementById("dropdownMenu");
+    const SelectedValue = dropdown.value;
+    console.log(SelectedValue)
+    // let JSONdata = null;
+    var JSONdata = await getADANIPORTSDefault();
+    dropdown.addEventListener('change', async function () {
+        const SelectedValue = dropdown.value;
 
+        // if (SelectedValue == "ADANIPORTS.csv")
+        //     try{
+        //     JSONdata = await getADANIPORTSDefault();
+        //     }catch (error){
+        //         console.error(error)
+        //     }
+        // else{
+        //     console.log("Drop changed")
+            console.log(SelectedValue)
+            JSONdata = await dropdownList(SelectedValue);
+            // dropdown.value = "ADANIPORTS.csv"; // This sets the dropdown to the desired default value
+                // Parse JSON data and display with dynamic table
+    const data = JSONdata.data;
+    const columns = JSONdata.columns;
+
+    console.log('Data:', data); // Log data to verify structure
+    console.log('Columns:', columns); // Log columns to verify structure
+    // Ensure data and columns are defined
+    if (data && columns) {
+        const tableHeader = document.getElementById("tableHeader");
+        const tableBody = document.getElementById("tableBody");
+
+        //clear existing content
+        tableHeader.innerHTML = "";
+        tableBody.innerHTML = "";
+
+        // Create table headers from column names
+        columns.forEach(column => {
+            const th = document.createElement("th");
+            th.textContent = column;
+            tableHeader.appendChild(th);
+        });
+
+        // Create table rows from data
+        data.forEach(row => {
+            const tr = document.createElement("tr");
+            columns.forEach((column, index) => {
+                const td = document.createElement("td");
+                td.textContent = row[index] || ""; // Access row data using index
+                tr.appendChild(td);
+            });
+            tableBody.appendChild(tr);
+        });
+    } else {
+        console.error('Data or columns are undefined.');
+    }
+
+        // }
+    })
+    // console.log('Data of display:', JSONdata); // This is a JavaScript object
     // Check if jsonData is valid
     if (!JSONdata) {
         console.error('Failed to retrieve or parse data.');
@@ -144,6 +180,26 @@ async function displayJSONData() {
         console.error('Data or columns are undefined.');
     }
 
+
+    function displayCSVData(csvContent) {
+        const rows = csvContent.split("\n");
+        const firstFiveRows = rows.slice(0, 6); // Get first 5 rows with 1 header
+        
+        const tableHeader = document.getElementById("tableHeader");
+        const tableBody = document.getElementById("tableBody");
+    
+        //clear existing content
+        tableHeader.innerHTML = "";
+        tableBody.innerHTML = "";
+    
+        // Create table headers from first row (header row)
+        const headers = firstFiveRows[0].split(",")
+        headers.forEach(header => {
+            const th = document.createElement("th");
+            th.textContent = header.trim();
+            tableHeader.appendChild(th)
+        })
+    }
     // ********Create table rows from data previous error************
     // data.forEach(row => {
     //     const tr = document.createElement("tr");
@@ -161,7 +217,9 @@ async function displayJSONData() {
 // You can add many event handlers to one element. You can add many event handlers of the same type to one element, 
 // i.e two "click" events.
 
-
+function processCSV(csvContent) {
+    console.log("processing csv content")
+}
 // API
 // Define the JSON structure as described
         // const jsonData = {

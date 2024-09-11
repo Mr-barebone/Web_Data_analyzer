@@ -12,8 +12,17 @@
     <input type="file" id = "fileInput" accept=".csv">
 
     <button id="submitButton">Submit</button>
-
-     <!-- Table for Displaying CSV Data -->
+    
+    <select id="dropdownMenu">
+        <option value="ADANIPORTS.csv" selected>ADANIPORTS.csv</option>
+        <option value="BRITANNIA.csv">BRITANNIA.csv</option>
+        <option value="HDFCBANK.csv">HDFCBANK.csv</option>
+        <option value="INFY.csv">INFY.csv</option>
+        <option value="NESTLEIND.csv">NESTLEIND.csv</option>
+        <option value="stock_metadata.csv">stock_metadata.csv</option>
+    </select>
+    
+    <!-- Table for Displaying CSV Data -->
      <table id="csvTable" border="1" cellpadding="5">
         <thead>
             <tr id="tableHeader"></tr>
@@ -21,9 +30,7 @@
         <tbody id="tableBody"></tbody>
     </table>
 
-    <select id="dropdownMenu">
-        <!-- Options will be populated here -->
-    </select>
+
     
     
     <script type = "module" src="colcnt.js"></script>

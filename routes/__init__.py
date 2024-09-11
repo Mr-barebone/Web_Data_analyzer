@@ -2,7 +2,7 @@ import pandas as pd
 import json
 import polars as pl
 
-from fastapi import APIRouter, Depends, WebSocket, WebSocketDisconnect
+from fastapi import APIRouter, Depends, WebSocket, WebSocketDisconnect, Query
 from fastapi.responses import JSONResponse
 from sqlalchemy.orm import Session
 
@@ -21,7 +21,7 @@ from .schemas import LoginData,ExportData
 import traceback
 
 import io
-
+from typing import Optional
 # from otb_calc import create_ra, form_base_data, inititalize_columns
 
 # TEMP = {'export_data':None}
@@ -88,13 +88,26 @@ save_table = OTB.save_table
 
 # *************Stock market
 DATA = pd.DataFrame() 
-DATA_DICT = {"default" : DATA}
+DATA_DICT = {"default" : DATA, "requested" : DATA}
 #**************************
 @otb.get("/get_default")
 async def get_default():
     DATA_DICT['default'] = pd.read_csv("bmaps_data/stock_data/ADANIPORTS.csv")
     data_json = f"""{DATA_DICT['default'].to_json(orient='split')}"""
     return JSONResponse(content={"data" : data_json})
+
+@otb.get("/get_requested_file")
+async def get_requested_file(filename : Optional[str] = Query(None)):
+    # DATA_DICT['requested'] = 
+    path = "bmaps_data/stock_data/"
+    DATA_DICT["requested"] = pd.read_csv(path+filename)
+    print(DATA_DICT["requested"].head())
+    print(DATA_DICT["requested"].head()["Symbol"].unique())
+
+    data_json = f"""{DATA_DICT['requested'].to_json(orient='split')}"""
+    print(f"requested filename {filename}")
+    return JSONResponse(content={"data" : data_json})
+
 
 @otb.get("/sub_filters")
 async def sub_filters():
