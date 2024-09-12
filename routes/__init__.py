@@ -167,6 +167,8 @@ async def get_data_ws(websocket: WebSocket, db: Session = Depends(get_db)):
         while True:
             data_filter = await websocket.receive_json()
             print(data_filter, "SDFD")
+            print(DATA_DICT["default"].columns)
+            path = "bmaps_data/stock_data/" + data_filter['company']
             # file_path = 'data.json'
 
             # filters = Filters(**data_filter)
@@ -176,7 +178,15 @@ async def get_data_ws(websocket: WebSocket, db: Session = Depends(get_db)):
 
             # secondary_filter = data_filter["secondary_filter"]
 
-            
+            if data_filter["cumulative"]==True:
+                mx_cols = {col : "max" for col in max_col}
+                avg_cols = {col : "mean" for col in avg_col}
+                sm_cols = {col : "sum" for col in sum_col}
+                # Merge dictionaries with priority to the last one if there are overlapping keys
+                combined_dict = {**mx_cols, **avg_cols, **sm_cols}
+                print(combined_dict)
+                data = pd.read_csv(path)
+                datas = data.agg(combined_dict) 
             # if TEMP["update_flag"]:
             #     print("update_flag_true")
             #     DATA = TEMP["key"]
@@ -502,12 +512,14 @@ async def get_data_ws(websocket: WebSocket, db: Session = Depends(get_db)):
             # #     # sel_all_kpi = data_filter['select_all_kpi']
             # #     kpi_all_selection = kp_operations.check_all_selection(kpi_all_selection)
 
-            # #     data_json = f"""{datas.to_json(orient='split')[:-1]}, "select_all_kpi":{json.dumps(kpi_all_selection)},"editable_cols":{editable_cols}, "percent_col":{json.dumps(percent_col)},"tabs":{tabs} ,"items":{size},"total":{bottom_column.to_json()} {datas.to_json(orient='split')[-1]}"""
-
+            # data_json = f"""{datas.to_json(orient='split')[:-1]}, "select_all_kpi":{json.dumps(kpi_all_selection)},"editable_cols":{editable_cols}, "percent_col":{json.dumps(percent_col)},"tabs":{tabs} ,"items":{size},"total":{bottom_column.to_json()} {datas.to_json(orient='split')[-1]}"""
+            print(datas)
+            data_json = f"""{pd.DataFrame([datas]).to_json(orient='split')}"""            
+            print(data_json)
             # # json.dumps() function will convert a subset of Python objects into a json string.
-            #     # await websocket.send_text(data_json)
-            await websocket.send_text(json.dumps({"long":"hi"}))
-            response = {"message": "Data received", "received_data": json.dumps(data_filter)}
+            await websocket.send_text(data_json)
+            # await websocket.send_text(json.dumps({"long":"hi"}))
+            # response = {"message": "Data received", "received_data": json.dumps(data_filter)}
             # await websocket.send_text(json.dumps(response))
     # 
     except WebSocketDisconnect:

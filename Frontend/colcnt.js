@@ -2,6 +2,31 @@
 import {getADANIPORTSDefault} from "./Bck.js";
 import {dropdownList} from "./dropdown.js";
 
+// Initial API structure
+let apiStructure = {
+    fetch_from_db: true,
+    company : false,
+    page_size: 10,
+    page_number: 0,
+    history_date_range: { fro: '2024-12-01', to: '2023-12-13' },
+    forecast_date_range: { fro: '2024-12-13', to: '2023-12-30' },
+    sales_channel: [],
+    product_family: [],
+    sub_families: [],
+    category: [],
+    sub_category: [],
+    suppliers: [],
+    sku: [],
+    top_items: [],
+    store_class: [],
+    select_all_kpi: false,
+    table_changes: {},
+    group_by: { status: false },
+    expand: { status: false },
+    secondary_filter: {},
+    cumulative: false // Add cumulative field
+};
+
 document.addEventListener("DOMContentLoaded", function() {
     get_py_data();
 });
@@ -9,7 +34,7 @@ function get_py_data()
     {
         const socket = new WebSocket('ws://127.0.0.1:5000/otb/get_data_ws');
         const dropdown = document.getElementById("dropdownMenu");
-        dropdown.value = "ADANIPORTS.csv";
+        dropdown.value = "ADANIPORTS.csv"; 
         // Ensure the connection is established before calling Bck_fetchDefaultFile.
         // The WebSocket connection is created synchronously, but WebSocket connections take some time to establish. 
         // Therefore, it's better to wait until the WebSocket is fully connected before using it in the 
@@ -48,14 +73,14 @@ function get_py_data()
         }
     });
 
-        document.getElementById("submitButton").addEventListener("click", async function(){
-        // 
-        try{
-            socket.send(JSON.stringify(jsonData));
-        }catch (error) {
-            console.error('Error; ', error);
-        }
-        });
+        // document.getElementById("submitButton").addEventListener("click", async function(){
+        // // 
+        // try{
+        //     socket.send(JSON.stringify(jsonData));
+        // }catch (error) {
+        //     console.error('Error; ', error);
+        // }
+        // });
         socket.onopen = function(event) {
             console.log('Connection is open');
         };
@@ -64,6 +89,7 @@ function get_py_data()
             try {
                 const parsedData = JSON.parse(event.data);
                 console.log(parsedData);
+                displayJSONData(parsedData);
             } catch (e) {
                 console.error('Error parsing JSON:', e);
             }
@@ -74,6 +100,11 @@ function get_py_data()
         socket.onclose = function() {
             console.log('Websocket connection closed');
         };
+
+        // Add an event listener to the button
+        document.getElementById('cumulativeButton').addEventListener('click', function() {
+            sendCumulative(socket);
+        });
     }
 
 
@@ -142,13 +173,23 @@ async function getJSONData() {
 
 }
 
+function sendCumulative(socket) {
+    if (socket && socket.readyState === WebSocket.OPEN) {
+        apiStructure.cumulative = true; // Update cumulative field
+        apiStructure.company = document.getElementById('dropdownMenu').value;
+        // Send the message over the WebSocket
+        socket.send(JSON.stringify(apiStructure));
+        console.log("Cumulative sent:", apiStructure);
+    } else {
+        console.log("WebSocket is not connected.");
+    }
+}
+
 // addEventListener() method attaches an event handler to an element without overwriting existing event handlers. 
 // You can add many event handlers to one element. You can add many event handlers of the same type to one element, 
 // i.e two "click" events.
 
-function processCSV(csvContent) {
-    console.log("processing csv content")
-}
+
 // API
 // Define the JSON structure as described
         // const jsonData = {

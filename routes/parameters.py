@@ -39,13 +39,13 @@ class OTB():
     PERCENT_COLS: list = functionalFields.PERCENT_COLS
     
     TABS: dict        = {
-                        'BudgetValue':     TABS.BudgetValue,
+                        'columns':     TABS.columns,
                                             
-                        'BudgetCost':       TABS.BudgetCost,
+                        # 'BudgetCost':       TABS.BudgetCost,
 
-                        'BudgetQuantity':   TABS.BudgetQuantity,
+                        # 'BudgetQuantity':   TABS.BudgetQuantity,
                                             
-                        'BudgetMargin':     TABS.BudgetMargin
+                        # 'BudgetMargin':     TABS.BudgetMargin
                         }
     
 
