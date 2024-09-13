@@ -92,14 +92,14 @@ DATA_DICT = {"default" : DATA, "requested" : DATA}
 #**************************
 @otb.get("/get_default")
 async def get_default():
-    DATA_DICT['default'] = pd.read_csv("bmaps_data/stock_data/ADANIPORTS.csv")
+    DATA_DICT['default'] = pd.read_csv("bmps_data/stock_data/ADANIPORTS.csv")
     data_json = f"""{DATA_DICT['default'].to_json(orient='split')}"""
     return JSONResponse(content={"data" : data_json})
 
 @otb.get("/get_requested_file")
 async def get_requested_file(filename : Optional[str] = Query(None)):
     # DATA_DICT['requested'] = 
-    path = "bmaps_data/stock_data/"
+    path = "bmps_data/stock_data/"
     DATA_DICT["requested"] = pd.read_csv(path+filename)
     print(DATA_DICT["requested"].head())
     print(DATA_DICT["requested"].head()["Symbol"].unique())
@@ -190,9 +190,10 @@ async def get_data_ws(websocket: WebSocket, db: Session = Depends(get_db)):
                     data = filter_date(data, data_filter)
                 datas = data.agg(combined_dict) 
                 datas = pd.DataFrame([datas])
-            if data_filter['history_date_range']['fro'] is not None:
-                data = pd.read_csv(path)
-                datas = filter_date(data, data_filter)
+            if data_filter["cumulative"]==False:
+                if data_filter['history_date_range']['fro'] is not None:
+                    data = pd.read_csv(path)
+                    datas = filter_date(data, data_filter)
             
             print(datas)
             data_json = f"""{datas.to_json(orient='split')}"""            
