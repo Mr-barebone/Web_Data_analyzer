@@ -1,5 +1,5 @@
 // import {Bck_fetchDefaultFile} from "./Bck.js";
-import {getADANIPORTSDefault} from "./Bck.js";
+import {getADANIPORTSDefault} from "./defaultVal.js";
 import {dropdownList} from "./dropdown.js";
 import {apiStructure} from "./apiStructure.js"
 import { initializeWebSocket, getSocket } from "./socket.js";
