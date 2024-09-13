@@ -5,7 +5,7 @@ export const apiStructure = {
     company : false,
     page_size: 10,
     page_number: 0,
-    history_date_range: { fro: '2024-12-01', to: '2023-12-13' },
+    history_date_range: { fro: null, to: null },
     forecast_date_range: { fro: '2024-12-13', to: '2023-12-30' },
     sales_channel: [],
     product_family: [],

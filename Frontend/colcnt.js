@@ -3,6 +3,7 @@ import {getADANIPORTSDefault} from "./Bck.js";
 import {dropdownList} from "./dropdown.js";
 import {apiStructure} from "./apiStructure.js"
 import { initializeWebSocket, getSocket } from "./socket.js";
+import { sendfilterdate } from "./submitdate.js";
 // import { global_hist_dates } from "./submitdate.js";
 
 document.addEventListener("DOMContentLoaded", function() {
@@ -12,6 +13,7 @@ function get_py_data()
     {
         // const socket = new WebSocket('ws://127.0.0.1:5000/otb/get_data_ws');
         const dropdown = document.getElementById("dropdownMenu");
+        // localStorage.setItem('selectedCompany', dropdown.value);
         dropdown.value = "ADANIPORTS.csv"; 
         // Ensure the connection is established before calling Bck_fetchDefaultFile.
         // The WebSocket connection is created synchronously, but WebSocket connections take some time to establish. 
@@ -52,15 +54,14 @@ function get_py_data()
     });
     initializeWebSocket(handleReceivedData)
     const socket = getSocket();
-
-        // document.getElementById("submitButton").addEventListener("click", async function(){
-        // // 
-        // try{
-        //     socket.send(JSON.stringify(jsonData));
-        // }catch (error) {
-        //     console.error('Error; ', error);
-        // }
-        // });
+    
+    const button = document.getElementById('submitDateRange');
+    if (button) {
+        button.addEventListener('click', sendfilterdate);
+    } else {
+        console.error('Submit button not found');
+    }
+       
 
 // ******************************************Manual Websocket**********************************************
         // socket.onopen = function(event) {
@@ -116,7 +117,7 @@ export function handleReceivedData(receivedData) {
     }
 }
 
-async function displayJSONData(JSONdata) {
+export async function displayJSONData(JSONdata) {
     // Parse JSON data and display with dynamic table
     const data = JSONdata.data;
     const columns = JSONdata.columns;

@@ -186,11 +186,17 @@ async def get_data_ws(websocket: WebSocket, db: Session = Depends(get_db)):
                 combined_dict = {**mx_cols, **avg_cols, **sm_cols}
                 print(combined_dict)
                 data = pd.read_csv(path)
+                if data_filter['history_date_range']['fro'] is not None:
+                    data = filter_date(data, data_filter)
                 datas = data.agg(combined_dict) 
+                datas = pd.DataFrame([datas])
+            if data_filter['history_date_range']['fro'] is not None:
+                data = pd.read_csv(path)
+                datas = filter_date(data, data_filter)
             
             print(datas)
-            data_json = f"""{pd.DataFrame([datas]).to_json(orient='split')}"""            
-            print(data_json)
+            data_json = f"""{datas.to_json(orient='split')}"""            
+            # print(data_json)
             # # json.dumps() function will convert a subset of Python objects into a json string.
             await websocket.send_text(data_json)
             # await websocket.send_text(json.dumps({"long":"hi"}))
@@ -200,3 +206,7 @@ async def get_data_ws(websocket: WebSocket, db: Session = Depends(get_db)):
     except WebSocketDisconnect:
         # Handle disconnection gracefully
         print("WebSocket connection closed unexpectedly")
+
+def filter_date(data, data_filter):
+    data = data[(data['Date'] >= data_filter['history_date_range']['fro']) & (data['Date'] <= data_filter['history_date_range']['to'])]
+    return data
