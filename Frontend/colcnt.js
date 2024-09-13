@@ -184,6 +184,7 @@ async function getJSONData() {
 
 
 function sendCumulative(socket) {
+    console.log("sendcumulative")
     if (socket && socket.readyState === WebSocket.OPEN) {
         apiStructure.cumulative = true; // Update cumulative field
         apiStructure.company = document.getElementById('dropdownMenu').value;
