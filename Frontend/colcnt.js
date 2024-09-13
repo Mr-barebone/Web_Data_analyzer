@@ -178,10 +178,7 @@ async function getJSONData() {
         return;
     }
     displayJSONData(JSONdata);
-
-
 }
-
 
 function sendCumulative(socket) {
     console.log("sendcumulative")
@@ -191,6 +188,7 @@ function sendCumulative(socket) {
         // Send the message over the WebSocket
         socket.send(JSON.stringify(apiStructure));
         console.log("Cumulative sent:", apiStructure);
+        apiStructure.cumulative = false;
     } else {
         console.log("WebSocket is not connected.");
     }
@@ -199,95 +197,3 @@ function sendCumulative(socket) {
 // addEventListener() method attaches an event handler to an element without overwriting existing event handlers. 
 // You can add many event handlers to one element. You can add many event handlers of the same type to one element, 
 // i.e two "click" events.
-
-
-// API
-// Define the JSON structure as described
-        // const jsonData = {
-        //     fetch_from_db: true,
-        //     page_size: 10,
-        //     page_number: 0,
-        //     history_date_range: { fro: '2024-12-01', to: '2023-12-13' },
-        //     forecast_date_range: { fro: '2024-12-13', to: '2023-12-30' },
-        //     sales_channel: [],
-        //     product_family: [],
-        //     sub_families: [],
-        //     category: [],
-        //     sub_category: [],
-        //     suppliers: [],
-        //     sku: [],
-        //     top_items: [],
-        //     store_class: [],
-        //     select_all_kpi: false,
-        //     table_changes: {},
-        //     group_by: {
-        //         status: false
-        //     },
-        //     expand: {
-        //         status: false
-        //     },
-        //     secondary_filter: {
-        //         HistoricalYear: [],
-        //         history_dates: [],
-        //         history_Quarter: [],
-        //         history_month: [],
-        //         history_week: [],
-        //         history_Day: [],
-        //         BudgetYear: [],
-        //         BudgetDate: [],
-        //         Quarter: [],
-        //         month: [],
-        //         week: [],
-        //         Day: [],
-        //         region: [],
-        //         country: [],
-        //         city: [],
-        //         Store_Name: [],
-        //         season: [],
-        //         Channel: [],
-        //         family: [],
-        //         sub_family: [],
-        //         supplier: [],
-        //         category: [],
-        //         dom_comm: [],
-        //         sub_category: [],
-        //         extended_sub_category: [],
-        //         sub_category_supplier: [],
-        //         article_score: []
-        //     }
-        // };
-// // WebSocket URL for the server
-// const WS_URL = 'ws://127.0.0.1:5000/otb/get_data_ws';
-// let socket;
-// // const socket = new WebSocket('ws://127.0.0.1:5000/otb/get_data_ws');
-
-// function initializeWebSocket(onMessageCallback) {
-//     // Create a WebSocket connection
-//     console.log("iniitializing ws");
-//     socket = new WebSocket(WS_URL);
-
-//     // Connection opened
-//     socket.onopen = function (event) {
-//         console.log('WebSocket connection opened:', event);
-//     };
-
-//     // Listen for messages
-//     socket.onmessage = function (event) {
-//         console.log('Received message:', event.data);
-//         if (typeof onMessageCallback === 'function') {
-//             onMessageCallback(event.data); // Pass received data to callback
-//         }
-//     };
-
-//     // Handle WebSocket errors
-//     socket.onerror = function (error) {
-//         console.error('WebSocket error:', error);
-//     };
-
-//     // Handle WebSocket close event
-//     socket.onclose = function () {
-//         console.log('WebSocket connection closed');
-//     };
-
-//     return socket;
-// }
